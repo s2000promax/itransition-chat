@@ -1,0 +1,22 @@
+.messenger {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    margin-left: 10px;
+    margin-right: 10px;
+
+    .message-box {
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+
+        textarea {
+            width: 100%;
+        }
+
+        button {
+            margin-left: 10px;
+        }
+    }
+}

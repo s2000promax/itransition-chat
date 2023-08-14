@@ -1,1 +1,30 @@
-App Component
+<div class="card">
+    <p-panel>
+        <ng-template pTemplate="header">
+            <span class="text-primary font-semibold text-xl w-full text-center">
+                Messenger with tags
+            </span>
+        </ng-template>
+        <div class="card">
+            <p-splitter
+                [panelSizes]="[30, 70]"
+                [style]="{ height: 'calc(100vh - 173px)' }"
+                styleClass="mb-0"
+            >
+                <ng-template pTemplate>
+                    <div
+                        class="col flex align-items-center justify-content-center"
+                    >
+                        <mc-tags></mc-tags>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate>
+                    <div class="w-full h-full m-0 p-0">
+                        <mc-messenger></mc-messenger>
+                    </div>
+                </ng-template>
+            </p-splitter>
+        </div>
+    </p-panel>
+</div>
+<mc-footer></mc-footer>
