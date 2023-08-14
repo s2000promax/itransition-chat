@@ -5,5 +5,4 @@ import { Component } from '@angular/core';
     templateUrl: './messenger.component.html',
     styleUrls: ['./messenger.component.scss'],
 })
-export class MessengerComponent {
-}
+export class MessengerComponent {}

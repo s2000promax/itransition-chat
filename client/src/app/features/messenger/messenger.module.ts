@@ -7,5 +7,4 @@ import { MessengerComponent } from './messenger.component';
     imports: [CommonModule],
     exports: [MessengerComponent],
 })
-export class MessengerModule {
-}
+export class MessengerModule {}

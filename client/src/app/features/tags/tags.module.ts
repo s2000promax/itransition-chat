@@ -7,5 +7,4 @@ import { TagsComponent } from './tags.component';
     imports: [CommonModule],
     exports: [TagsComponent],
 })
-export class TagsModule {
-}
+export class TagsModule {}
