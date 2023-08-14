@@ -1,0 +1,26 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("VERCEL_DATABASE_URL")
+}
+
+model User {
+    id        String    @id @default(uuid())
+    createdAt DateTime  @default(now()) @map("created_at")
+    message   Message[]
+
+    @@map("users")
+}
+
+model Message {
+    id        String   @id @default(uuid())
+    createdAt DateTime @default(now()) @map("created_at")
+    user      User     @relation(fields: [userId], references: [id])
+    userId    String
+    message   String
+
+    @@map("messages")
+}
