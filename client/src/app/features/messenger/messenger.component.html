@@ -1,1 +1,48 @@
-Messenger Component
+<div class="card messenger">
+    <p-table
+        [value]="virtualMessages"
+        [scrollable]="true"
+        scrollHeight="550px"
+        [rows]="100"
+        [virtualScroll]="true"
+        [virtualScrollItemSize]="46"
+        [lazy]="true"
+        (onLazyLoad)="loadUsersLazy($event)"
+    >
+        <ng-template pTemplate="header">
+            <tr>
+                <th>Messages</th>
+            </tr>
+        </ng-template>
+        <ng-template
+            pTemplate="body"
+            ngFor
+            let-message
+            [ngForOf]="virtualMessages"
+        >
+            <tr style="height: 46px">
+                <td>
+                    <span>{{ message.content }}</span>
+                    <span>{{ message.timestamp | date: 'short' }}</span>
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="loadingbody">
+            <tr style="height: 46px">
+                <td>
+                    <p-skeleton></p-skeleton>
+                </td>
+            </tr>
+        </ng-template>
+    </p-table>
+    <div class="card">
+        <form [formGroup]="messageForm" class="message-box">
+            <textarea
+                rows="5"
+                pInputTextarea
+                formControlName="content"
+            ></textarea>
+            <button pButton label="Send" class="p-button-success"></button>
+        </form>
+    </div>
+</div>
