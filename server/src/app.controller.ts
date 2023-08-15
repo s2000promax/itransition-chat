@@ -1,12 +1,26 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { AppService } from './app.service';
+import { CreateMessageDto, GetMessagesDto } from './dto';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
+import { Message } from '@prisma/client';
 
+@ApiTags()
 @Controller()
 export class AppController {
     constructor(private readonly appService: AppService) {}
 
-    @Get()
-    getHello(): string {
-        return this.appService.getHello();
+    @Post('message')
+    @ApiBody({ type: CreateMessageDto })
+    createMessage(
+        @Body() createMessageDto: CreateMessageDto,
+    ): Promise<Message> {
+        return this.appService.createMessage(createMessageDto);
+    }
+
+    @Get('messages')
+    getMessages(@Query() getMessagesDto: GetMessagesDto): Promise<Message[]> {
+        return this.appService.getMessages(
+            getMessagesDto.tags?.length ? getMessagesDto.tags : undefined,
+        );
     }
 }
