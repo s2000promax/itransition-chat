@@ -1,13 +1,9 @@
 <div class="card messenger">
     <p-table
-        [value]="virtualMessages"
+        [value]="(messages$ | async) ?? []"
         [scrollable]="true"
-        scrollHeight="550px"
-        [rows]="100"
-        [virtualScroll]="true"
-        [virtualScrollItemSize]="46"
-        [lazy]="true"
-        (onLazyLoad)="loadUsersLazy($event)"
+        scrollHeight="650px"
+        styleClass="mt-2"
     >
         <ng-template pTemplate="header">
             <tr>
@@ -18,31 +14,57 @@
             pTemplate="body"
             ngFor
             let-message
-            [ngForOf]="virtualMessages"
+            [ngForOf]="messages$ | async"
         >
-            <tr style="height: 46px">
+            <tr style="height: 100px">
                 <td>
-                    <span>{{ message.content }}</span>
-                    <span>{{ message.timestamp | date: 'short' }}</span>
-                </td>
-            </tr>
-        </ng-template>
-        <ng-template pTemplate="loadingbody">
-            <tr style="height: 46px">
-                <td>
-                    <p-skeleton></p-skeleton>
+                    <div
+                        class="p-card flex flex-column h-5rem justify-content-between bg-black-alpha-10"
+                    >
+                        <span class="ml-2 mt-2">{{
+                            removeTags(message.content)
+                        }}</span>
+                        <div class="flex justify-content-between">
+                            <div>
+                                <p-tag
+                                    styleClass="ml-2"
+                                    value="{{ tag }}"
+                                    [rounded]="true"
+                                    *ngFor="
+                                        let tag of parseContent(message.content)
+                                    "
+                                ></p-tag>
+                            </div>
+                            <p-tag
+                                styleClass="mr-2 mb-2"
+                                severity="success"
+                                value="{{ message.timestamp | date: 'short' }}"
+                                [rounded]="true"
+                            ></p-tag>
+                        </div>
+                    </div>
                 </td>
             </tr>
         </ng-template>
     </p-table>
     <div class="card">
-        <form [formGroup]="messageForm" class="message-box">
+        <form
+            [formGroup]="messageForm"
+            (ngSubmit)="onMessageSend()"
+            class="message-box"
+        >
             <textarea
                 rows="5"
                 pInputTextarea
                 formControlName="content"
             ></textarea>
-            <button pButton label="Send" class="p-button-success"></button>
+            <button
+                pButton
+                label="Send"
+                class="p-button-success"
+                type="submit"
+                [disabled]="messageForm.invalid || isSending"
+            ></button>
         </form>
     </div>
 </div>

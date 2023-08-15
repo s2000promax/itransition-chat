@@ -1,4 +1,4 @@
 export const environment = {
     production: false,
-    apiUrl: 'https://itransition-chat-server.vercel.app/api',
+    apiUrl: 'http://localhost:8002/api',
 };

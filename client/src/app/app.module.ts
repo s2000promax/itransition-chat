@@ -7,12 +7,14 @@ import { PanelModule } from 'primeng/panel';
 import { SplitterModule } from 'primeng/splitter';
 import { TagsModule } from '@features/tags/tags.module';
 import { MessengerModule } from '@features/messenger/messenger.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
     declarations: [AppComponent],
     imports: [
         BrowserModule,
         BrowserAnimationsModule,
+        HttpClientModule,
         FooterModule,
         PanelModule,
         SplitterModule,

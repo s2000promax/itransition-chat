@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from './prisma/prisma.service';
 import { CreateMessageDto } from './dto';
-import { Message, Tag } from '@prisma/client';
+import { Message, MessageTag, Tag } from '@prisma/client';
 
 @Injectable()
 export class AppService {
@@ -44,29 +44,32 @@ export class AppService {
     }
 
     async getMessages(tags?: string[]): Promise<Message[]> {
-        if (tags) {
-            if (!Array.isArray(tags)) {
-                tags = [tags];
-            }
-
-            if (tags.length > 0) {
-                return this.prisma.message.findMany({
-                    where: {
-                        tags: {
-                            some: {
-                                tag: {
-                                    name: {
-                                        in: tags,
+        if (tags && tags.length > 0) {
+            return this.prisma.message.findMany({
+                where: {
+                    OR: [
+                        {
+                            tags: {
+                                some: {
+                                    tag: {
+                                        name: {
+                                            in: tags,
+                                        },
                                     },
                                 },
                             },
                         },
-                    },
-                    include: {
-                        tags: true,
-                    },
-                });
-            }
+                        {
+                            tags: {
+                                none: {},
+                            },
+                        },
+                    ],
+                },
+                include: {
+                    tags: true,
+                },
+            });
         }
 
         return this.prisma.message.findMany({
@@ -76,9 +79,18 @@ export class AppService {
         });
     }
 
+    async getAllTags(): Promise<string[]> {
+        const tags = await this.prisma.tag.findMany({
+            select: {
+                name: true,
+            },
+        });
+
+        return tags.map((tag) => tag.name);
+    }
+
     private extractTags(content: string): string[] {
         const regex: RegExp = /#\w+/g;
-        const tags: RegExpMatchArray | [] = content.match(regex) || [];
-        return tags.map((tag: string | undefined) => tag.slice(1));
+        return content.match(regex) || [];
     }
 }
