@@ -1,1 +1,24 @@
-Tags Component
+<div class="card tags-container">
+    <div>
+        <h3 class="text-center">Your Tags list</h3>
+        <p-listbox
+            [options]="(usersTags$ | async) ?? []"
+            [(ngModel)]="selectedUserTags"
+            [style]="{ width: '15rem' }"
+            [multiple]="false"
+            [metaKeySelection]="false"
+            (onChange)="onFilterChange($event)"
+            emptyMessage="No Tags selected"
+            styleClass="mt-2"
+        ></p-listbox>
+    </div>
+    <p-autoComplete
+        placeholder="#Enter your Tag"
+        [(ngModel)]="selectedTag"
+        [dropdown]="false"
+        [suggestions]="filteredTags"
+        (completeMethod)="filterTag($event)"
+        (onKeyUp)="onSubmitSelect($event)"
+        styleClass="mb-2"
+    ></p-autoComplete>
+</div>

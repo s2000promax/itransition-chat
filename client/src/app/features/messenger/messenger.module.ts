@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { TagModule } from 'primeng/tag';
 
 @NgModule({
     declarations: [MessengerComponent],
@@ -16,6 +17,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
         ReactiveFormsModule,
         ButtonModule,
         InputTextareaModule,
+        TagModule,
     ],
     exports: [MessengerComponent],
 })

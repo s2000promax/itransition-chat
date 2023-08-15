@@ -17,10 +17,15 @@ export class AppController {
         return this.appService.createMessage(createMessageDto);
     }
 
-    @Get('messages')
-    getMessages(@Query() getMessagesDto: GetMessagesDto): Promise<Message[]> {
+    @Post('messages')
+    getMessages(@Body() getMessagesDto: GetMessagesDto): Promise<Message[]> {
         return this.appService.getMessages(
             getMessagesDto.tags?.length ? getMessagesDto.tags : undefined,
         );
+    }
+
+    @Get('tags')
+    getAllTags(): Promise<string[]> {
+        return this.appService.getAllTags();
     }
 }

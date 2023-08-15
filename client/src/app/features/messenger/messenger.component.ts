@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { TableLazyLoadEvent } from 'primeng/table';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Form } from '@shared/types/form.interface';
+import { Observable, Subscription } from 'rxjs';
+import { MessagesService } from '@services/messages.service';
 
 export interface Tag {
     id: string;
@@ -22,68 +23,60 @@ type MessageForm = Pick<Message, 'content'>;
     templateUrl: './messenger.component.html',
     styleUrls: ['./messenger.component.scss'],
 })
-export class MessengerComponent implements OnInit {
-    virtualMessages!: Message[];
+export class MessengerComponent implements OnInit, OnDestroy {
+    messages$!: Observable<Message[]>;
     messageForm!: FormGroup<Form<MessageForm>>;
 
-    constructor(private formBuilder: FormBuilder) {}
+    isSending: boolean = false;
+
+    receiverSubscription!: Subscription;
+    senderSubscription!: Subscription;
+
+    constructor(
+        private formBuilder: FormBuilder,
+        private messagesService: MessagesService,
+    ) {}
 
     ngOnInit() {
+        this.messages$ = this.messagesService.getMessages;
+        this.receiverSubscription = this.messagesService
+            .pollMessages()
+            .subscribe();
         this.messageForm = this.formBuilder.nonNullable.group({
-            content: [''],
+            content: ['', [Validators.required]],
         });
-
-        this.virtualMessages = [
-            {
-                id: '0',
-                content: 'First message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '1',
-                content: 'Second message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '2',
-                content: 'Third message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '3',
-                content: 'Fourth message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '4',
-                content: 'Fifth message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '5',
-                content: 'Sixth message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '6',
-                content: 'Seventh message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-            {
-                id: '7',
-                content: 'Eighth message',
-                tags: [{ id: '0', name: '#first' }],
-                timestamp: new Date(Date.now()),
-            },
-        ];
     }
 
-    loadUsersLazy($event: TableLazyLoadEvent) {}
+    onMessageSend() {
+        if (!this.messageForm.invalid) {
+            this.isSending = true;
+
+            const { content } = this.messageForm.getRawValue();
+
+            this.senderSubscription = this.messagesService
+                .sendMessage(content)
+                .subscribe({
+                    next: () => {
+                        this.messageForm.reset();
+                        this.isSending = false;
+                    },
+                    error: () => {
+                        this.isSending = false;
+                    },
+                });
+        }
+    }
+
+    parseContent(content: string): string[] {
+        return content.match(/#\w+/g) || [];
+    }
+
+    removeTags(content: string): string {
+        return content.replace(/#\w+/g, '');
+    }
+
+    ngOnDestroy() {
+        this.senderSubscription.unsubscribe();
+        this.receiverSubscription.unsubscribe();
+    }
 }
